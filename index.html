@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101522">
+<meta name="description" content="Torsha Biswas's GIS, Remote Sensing and Spatial Analysis portfolio.">
+<title>TerraScope | Torsha Biswas</title>
+
+<style>
+:root {
+  --bg: #101522;
+  --panel: #191f2e;
+  --mint: #a9e9c5;
+  --white: #f6f7fb;
+  --muted: #b6bece;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.7;
+}
+a { color: inherit; text-decoration: none; }
+header {
+  max-width: 1200px;
+  margin: auto;
+  padding: 24px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.brand { font-weight: 800; letter-spacing: 1px; }
+.brand span { color: var(--mint); }
+nav { display: flex; gap: 22px; flex-wrap: wrap; }
+nav a { color: var(--muted); font-size: 14px; }
+nav a:hover { color: var(--mint); }
+.hero {
+  max-width: 1200px;
+  min-height: 76vh;
+  margin: auto;
+  padding: 65px 6% 90px;
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  align-items: center;
+  gap: 50px;
+}
+.eyebrow {
+  color: var(--mint);
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+h1 {
+  font-size: clamp(42px, 6.5vw, 82px);
+  line-height: 1.03;
+  letter-spacing: -3px;
+  margin: 22px 0;
+}
+h1 span, .accent { color: var(--mint); }
+.intro { color: var(--muted); max-width: 590px; }
+.actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 30px; }
+.btn {
+  display: inline-block;
+  padding: 12px 19px;
+  border-radius: 30px;
+  background: var(--mint);
+  color: #101522;
+  font-weight: bold;
+}
+.btn.secondary {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid #485064;
+}
+.photo-frame {
+  min-height: 340px;
+  border-radius: 48% 48% 18px 18px;
+  border: 1px solid #586275;
+  background: linear-gradient(145deg, #263b3a, #202638);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+  color: var(--muted);
+  overflow: hidden;
+}
+.photo-frame img {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  border-radius: inherit;
+}
+section {
+  max-width: 1100px;
+  margin: auto;
+  padding: 70px 6%;
+  scroll-margin-top: 25px;
+}
+.section-label {
+  color: var(--mint);
+  font-size: 12px;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+h2 { font-size: clamp(28px, 4vw, 42px); line-height: 1.2; }
+.section-intro { color: var(--muted); max-width: 720px; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 28px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid #2b3345;
+  border-radius: 16px;
+  padding: 25px;
+}
+.card h3 { margin-top: 0; }
+.card p { color: var(--muted); }
+.tag {
+  display: inline-block;
+  border: 1px solid #45564e;
+  color: var(--mint);
+  border-radius: 20px;
+  padding: 4px 10px;
+  margin: 5px 4px 0 0;
+  font-size: 12px;
+}
+footer {
+  border-top: 1px solid #2b3345;
+  padding: 28px 6%;
+  color: var(--muted);
+  text-align: center;
+}
+@media (max-width: 760px) {
+  header { align-items: flex-start; flex-direction: column; }
+  nav { gap: 14px; }
+  .hero { grid-template-columns: 1fr; padding-top: 35px; gap: 25px; }
+  .photo-frame { min-height: 260px; max-width: 340px; width: 100%; }
+  .photo-frame img { height: 330px; }
+  h1 { letter-spacing: -1.5px; }
+  .cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <a class="brand" href="#home">TERRA<span>SCOPE</span></a>
+  <nav aria-label="Main navigation">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#research">Research</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div>
+    <div class="eyebrow">GEOSPATIAL INTELLIGENCE</div>
+    <h1>Beyond Satellite Vision,<br><span>Into Spatial Insights.</span></h1>
+    <p class="intro">
+      Hi, I'm <strong>Torsha Biswas</strong>, a Geography postgraduate student
+      interested in GIS, Remote Sensing, spatial analysis and Web GIS.
+      I explore how geographic data can help us understand landscapes
+      and environmental change.
+    </p>
+    <div class="actions">
+      <a class="btn" href="#projects">Explore Projects ↗</a>
+      <a class="btn secondary" href="#about">About Me</a>
+    </div>
+  </div>
+  <div class="photo-frame">
+    <div>
+      <strong> TORSHA BISWAS </strong><br>
+      Profile photo will appear here after upload.
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-label">01 / ABOUT ME</div>
+  <h2>Geography meets technology.</h2>
+  <p class="section-intro">
+    I am developing my skills in geospatial technologies to analyse
+    spatial patterns, map land-use change and explore environmental
+    challenges. This portfolio documents my academic learning and GIS work.
+  </p>
+</section>
+
+<section id="skills">
+  <div class="section-label">02 / TECHNICAL SKILLS</div>
+  <h2>Tools & methods</h2>
+  <div class="cards">
+    <article class="card">
+      <h3>GIS & Mapping</h3>
+      <span class="tag">QGIS</span>
+      <span class="tag">ArcGIS</span>
+      <span class="tag">Cartography</span>
+      <span class="tag">Spatial Analysis</span>
+    </article>
+    <article class="card">
+      <h3>Remote Sensing</h3>
+      <span class="tag">Satellite Imagery</span>
+      <span class="tag">LULC Mapping</span>
+      <span class="tag">Spectral Indices</span>
+      <span class="tag">Google Earth Engine</span>
+    </article>
+    <article class="card">
+      <h3>Terrain & Environment</h3>
+      <span class="tag">DEM Analysis</span>
+      <span class="tag">Drainage Analysis</span>
+      <span class="tag">Hazard Mapping</span>
+    </article>
+    <article class="card">
+      <h3>Web GIS</h3>
+      <span class="tag">Interactive Maps</span>
+      <span class="tag">GIS Web Publishing</span>
+      <span class="tag">GitHub Pages</span>
+    </article>
+  </div>
+  <p class="section-intro">Only tools and methods you have actually used should remain listed here.</p>
+</section>
+
+<section id="projects">
+  <div class="section-label">03 / SELECTED WORK</div>
+  <h2>Projects & spatial studies</h2>
+  <p class="section-intro">Project descriptions and map links can be added or updated as your work is completed.</p>
+  <div class="cards">
+    <article class="card">
+      <h3>Land Use / Land Cover Mapping</h3>
+      <p>Satellite-based land-cover classification and change analysis across selected years.</p>
+      <span class="tag">Remote Sensing</span><span class="tag">LULC</span>
+    </article>
+    <article class="card">
+      <h3>Groundwater Potential Zonation</h3>
+      <p>GIS-based thematic-layer analysis to explore groundwater potential zones.</p>
+      <span class="tag">GIS</span><span class="tag">Weighted Overlay</span>
+    </article>
+    <article class="card">
+      <h3>Drainage Density Analysis</h3>
+      <p>Terrain and drainage-network analysis using DEM-derived hydrological parameters.</p>
+      <span class="tag">DEM</span><span class="tag">Hydrology</span>
+    </article>
+    <article class="card">
+      <h3>Flood / Environmental Zonation</h3>
+      <p>Spatial classification of environmental conditions and potential hazard zones.</p>
+      <span class="tag">Spatial Analysis</span><span class="tag">Mapping</span>
+    </article>
+  </div>
+  <p class="section-intro">These are portfolio placeholders. Keep only projects you have actually worked on, and update each card with its map, methods and results.</p>
+</section>
+
+<section id="research">
+  <div class="section-label">04 / RESEARCH & WEB GIS</div>
+  <h2>From analysis to communication.</h2>
+  <p class="section-intro">
+    This section will feature dissertation work, research summaries,
+    interactive maps and published GIS workflows as they become ready.
+  </p>
+</section>
+
+<section id="contact">
+  <div class="section-label">05 / CONTACT</div>
+  <h2>Let's connect.</h2>
+  <p class="section-intro">
+    Interested in GIS, Remote Sensing, spatial research or mapping projects?
+    Connect with me through my professional profiles.
+  </p>
+  <div class="actions">
+    <a class="btn secondary" href="https://github.com/torshabiswas24-ship-it">GitHub Profile ↗</a>
+    <a class="btn secondary" href="https://www.linkedin.com/">LinkedIn ↗</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  © 2026 Torsha Biswas · TerraScope Geospatial Intelligence
+</footer>
+</body>
+</html>
