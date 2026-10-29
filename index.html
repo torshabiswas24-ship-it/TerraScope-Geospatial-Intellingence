@@ -118,6 +118,25 @@ footer { border-top: 1px solid #2e3748; padding: 30px 6%; text-align: center; co
   nav { gap: 13px; }
   .hero { grid-template-columns: 1fr; padding-top: 35px; gap: 30px; }
   .portrait { min-height: 320px; }
+  .portrait {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  min-height: auto;
+  overflow: visible;
+}
+
+.portrait img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 480px;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 35px;
+}
   .stats { grid-template-columns: 1fr; gap: 15px; }
   .cards { grid-template-columns: 1fr; }
   h1 { letter-spacing: -2px; }
