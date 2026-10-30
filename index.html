@@ -219,6 +219,43 @@ footer { border-top: 1px solid #2e3748; padding: 30px 6%; text-align: center; co
   font-size: 11px;
   letter-spacing: 1px;
 }
+  .skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.skill-category {
+  background: #14243a;
+  border: 1px solid #29445a;
+  border-radius: 14px;
+  padding: 24px;
+  transition: 0.3s ease;
+}
+
+.skill-category:hover {
+  transform: translateY(-5px);
+  border-color: #8fffd2;
+}
+
+.skill-category h3 {
+  color: #8fffd2;
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+}
+
+.skill-category span {
+  display: inline-block;
+  color: #ffffff;
+  background: #203951;
+  border: 1px solid #35536a;
+  border-radius: 20px;
+  padding: 8px 12px;
+  margin: 5px 3px;
+  font-size: 13px;
+}
 </style>
 </head>
 <body>
@@ -324,11 +361,43 @@ footer { border-top: 1px solid #2e3748; padding: 30px 6%; text-align: center; co
 <section class="content" id="skills">
   <div class="eyebrow">Technical Toolkit</div>
   <h2>Tools & Methods</h2>
-  <div class="skills">
-    <span>QGIS</span><span>ArcGIS</span><span>Google Earth Engine</span>
-    <span>Remote Sensing</span><span>LULC Classification</span>
-    <span>Spatial Analysis</span><span>DEM & Terrain Analysis</span><span>Web GIS</span>
+  >
+  <div class="skill-category">
+    <h3>GIS SOFTWARE</h3>
+    <span>QGIS</span>
+    <span>ArcGIS Pro</span>
+    <span>ArcGIS Desktop</span>
   </div>
+
+  <div class="skill-category">
+    <h3>REMOTE SENSING</h3>
+    <span>Google Earth Engine (GEE)</span>
+    <span>Satellite Image Processing</span>
+    <span>LULC Classification</span>
+    <span>NDVI · NDBI · NDWI</span>
+  </div>
+
+  <div class="skill-category">
+    <h3>SPATIAL ANALYSIS</h3>
+    <span>DEM & Terrain Analysis</span>
+    <span>Hydrological Analysis</span>
+    <span>Spatial Modelling</span>
+    <span>Network Analysis</span>
+  </div>
+
+  <div class="skill-category">
+    <h3>PROGRAMMING</h3>
+    <span>Python for GIS</span>
+  </div>
+
+  <div class="skill-category">
+    <h3>WEB GIS & CARTOGRAPHY</h3>
+    <span>QGIS Web GIS</span>
+    <span>Map Design</span>
+    <span>Cartographic Visualization</span>
+  </div>
+
+</div>
 </section>
 
 <section class="content" id="contact">
