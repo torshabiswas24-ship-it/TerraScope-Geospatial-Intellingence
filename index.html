@@ -179,6 +179,46 @@ footer { border-top: 1px solid #2e3748; padding: 30px 6%; text-align: center; co
   margin-top: 28px;
   font-size: 14px;
 }
+  .education-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.education-card {
+  background: #14243a;
+  border: 1px solid #29445a;
+  border-radius: 14px;
+  padding: 25px;
+  transition: 0.3s ease;
+}
+
+.education-card:hover {
+  transform: translateY(-5px);
+  border-color: #8fffd2;
+}
+
+.education-card h3 {
+  color: #ffffff;
+  font-size: 18px;
+  margin: 15px 0 10px;
+}
+
+.education-card p {
+  color: #8fffd2;
+  font-size: 15px;
+}
+
+.education-status {
+  display: inline-block;
+  color: #8fffd2;
+  border: 1px solid #8fffd2;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
 </style>
 </head>
 <body>
@@ -222,7 +262,37 @@ footer { border-top: 1px solid #2e3748; padding: 30px 6%; text-align: center; co
   <h2>Understanding Earth Through Spatial Science.</h2>
   <p class="section-intro">My academic interests include land-use and land-cover mapping, environmental assessment, terrain analysis and geospatial modelling. I use GIS tools to explore spatial patterns and communicate findings through maps and visualisations.</p>
 </section>
+<section class="content" id="education">
 
+  <div class="eyebrow">Academic Background</div>
+  <h2>Education</h2>
+
+  <p class="section-intro">
+    Building a strong academic foundation in Geography,
+    GIS and Remote Sensing.
+  </p>
+
+  <div class="education-grid">
+
+    <article class="education-card">
+      <span class="education-status">ONGOING</span>
+      <h3>M.Sc. in Remote Sensing & Earth Science (GIS)</h3>
+      <p>JIS University</p>
+    </article>
+
+    <article class="education-card">
+      <h3>M.Sc. in Geography (Honours)</h3>
+      <p>University of Kalyani</p>
+    </article>
+
+    <article class="education-card">
+      <h3>B.Sc. in Geography (Honours)</h3>
+      <p>NSOU</p>
+    </article>
+
+  </div>
+
+</section>
 <section class="content" id="projects">
   <div class="eyebrow">Selected Work</div>
   <h2>Projects & Research</h2>
