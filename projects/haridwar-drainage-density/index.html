@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+    <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/leaflet.photon.css">
+    <link rel="stylesheet" href="css/leaflet-measure.css">
+
+    <style>
+    * { box-sizing:border-box; }
+    html, body {
+        width:100%; height:100%; margin:0; padding:0;
+        overflow:hidden; font-family:Arial,Helvetica,sans-serif;
+        background:#071827;
+    }
+    #dashboard-sidebar {
+        position:fixed; z-index:1000; left:0; top:0; bottom:0;
+        width:340px; overflow-y:auto; padding:24px 20px 28px;
+        color:#eaf4f5;
+        background:linear-gradient(160deg,#071827 0%,#102c43 62%,#0b3a43 100%);
+        border-right:1px solid rgba(143,220,207,.22);
+        box-shadow:8px 0 28px rgba(0,0,0,.22);
+    }
+    .brand {
+        color:#83e2c1; font-size:11px; font-weight:700;
+        letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;
+    }
+    .side-title {
+        font-size:25px; line-height:1.16; font-weight:800;
+        margin:0 0 9px; color:#f5fbfb;
+    }
+    .side-subtitle {
+        color:#a9c3cc; font-size:12px; line-height:1.6; margin:0 0 23px;
+    }
+    .section-label {
+        color:#83e2c1; font-size:10px; letter-spacing:1.7px;
+        font-weight:800; margin:22px 0 10px; text-transform:uppercase;
+    }
+    .summary-card {
+        padding:15px; border:1px solid rgba(147,205,211,.18);
+        border-radius:14px; background:rgba(255,255,255,.055);
+    }
+    .summary-card p {
+        color:#c2d5dc; font-size:12px; line-height:1.65; margin:0;
+    }
+    .metric-grid {
+        display:grid; grid-template-columns:1fr 1fr; gap:9px;
+    }
+    .metric {
+        padding:13px 11px; border-radius:12px;
+        background:rgba(255,255,255,.07);
+        border:1px solid rgba(147,205,211,.12);
+    }
+    .metric strong {
+        display:block; font-size:13px; color:#f4fbfa; margin-bottom:5px;
+    }
+    .metric span {
+        display:block; font-size:10px; color:#9eb9c3; line-height:1.4;
+    }
+    .layer-list { display:flex; flex-direction:column; gap:9px; }
+    .layer-option {
+        display:flex; align-items:center; gap:10px; padding:11px 12px;
+        border-radius:10px; background:rgba(255,255,255,.055);
+        color:#d8e8e9; font-size:12px; cursor:pointer;
+    }
+    .layer-option input {
+        accent-color:#55d6ad; width:15px; height:15px;
+    }
+    .layer-dot {
+        width:9px; height:9px; border-radius:50%; flex:0 0 9px;
+    }
+    .side-note {
+        color:#8faeb8; font-size:10px; line-height:1.6; margin-top:18px;
+    }
+    .map-heading {
+        position:fixed; z-index:800; top:16px; right:18px;
+        padding:11px 16px; border-radius:10px; color:#f2fbfa;
+        background:rgba(7,24,39,.88);
+        border:1px solid rgba(255,255,255,.16);
+        font-size:11px; letter-spacing:1px; font-weight:700;
+    }
+    #map {
+        position:absolute; top:0; right:0; bottom:0;
+        left:340px; width:auto; height:100%;
+    }
+    .leaflet-control-layers { display:none !important; }
+    .info { display:none !important; }
+
+    @media (max-width:700px) {
+        #dashboard-sidebar { width:280px; padding:18px 15px; }
+        #map { left:280px; }
+        .side-title { font-size:21px; }
+        .map-heading { right:8px; top:8px; font-size:9px; }
+    }
+    @media (max-width:480px) {
+        #dashboard-sidebar { width:245px; padding:15px 12px; }
+        #map { left:245px; }
+        .side-title { font-size:18px; }
+    }
+    </style>
+
+    <title>Haridwar Drainage Density Analysis | TerraScope</title>
+</head>
+
+<body>
+    <aside id="dashboard-sidebar">
+        <div class="brand">TERRASCOPE · INTERACTIVE WEB GIS</div>
+        <h1 class="side-title">Haridwar Drainage Density Analysis</h1>
+        <p class="side-subtitle">
+            GIS-based assessment of drainage network distribution and
+            spatial drainage density in Haridwar District, Uttarakhand, India.
+        </p>
+
+        <div class="section-label">Project Overview</div>
+        <div class="summary-card">
+            <p>
+                Explore the drainage density surface, drainage grid,
+                stream network and district boundary. Switch individual
+                map layers on or off to examine their spatial relationship.
+            </p>
+        </div>
+
+        <div class="section-label">Study Information</div>
+        <div class="metric-grid">
+            <div class="metric"><strong>Haridwar</strong><span>Study district</span></div>
+            <div class="metric"><strong>GIS & DEM</strong><span>Analysis approach</span></div>
+            <div class="metric"><strong>Drainage Density</strong><span>Primary theme</span></div>
+            <div class="metric"><strong>Uttarakhand</strong><span>India</span></div>
+        </div>
+
+        <div class="section-label">Map Layers</div>
+        <div class="layer-list">
+            <label class="layer-option">
+                <input type="checkbox" id="toggle-density" checked>
+                <span class="layer-dot" style="background:#168bd2"></span>
+                Drainage Density Map
+            </label>
+            <label class="layer-option">
+                <input type="checkbox" id="toggle-streams" checked>
+                <span class="layer-dot" style="background:#1d7dfa"></span>
+                Stream Network
+            </label>
+            <label class="layer-option">
+                <input type="checkbox" id="toggle-points" checked>
+                <span class="layer-dot" style="background:#1497ec"></span>
+                Drainage Feature Points
+            </label>
+            <label class="layer-option">
+                <input type="checkbox" id="toggle-grid" checked>
+                <span class="layer-dot" style="background:#987db7"></span>
+                Drainage Density Grid
+            </label>
+            <label class="layer-option">
+                <input type="checkbox" id="toggle-boundary" checked>
+                <span class="layer-dot" style="background:#d7a34c"></span>
+                Haridwar District Boundary
+            </label>
+            <label class="layer-option">
+                <input type="checkbox" id="toggle-basemap" checked>
+                <span class="layer-dot" style="background:#a8b6b8"></span>
+                OpenStreetMap Basemap
+            </label>
+        </div>
+
+        <div class="section-label">How to Explore</div>
+        <div class="summary-card">
+            <p>
+                Use the map zoom controls to explore the study area.
+                Select a drainage grid cell or feature point to view its
+                available attribute information. Use the layer switches
+                above to compare map components.
+            </p>
+        </div>
+        <p class="side-note">
+            Map layers are based on the project files published in this
+            Web GIS. Basemap © OpenStreetMap contributors.
+        </p>
+    </aside>
+
+    <div class="map-heading">DRAINAGE DENSITY · HARIDWAR DISTRICT</div>
+    <div id="map"></div>
+
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Layers.Tree.min.js"></script>
+    <script src="js/L.Control.Locate.min.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet.photon.js"></script>
+    <script src="js/leaflet-measure.js"></script>
+    <script src="data/HARIDWAR_BOUNDAR_1.js"></script>
+    <script src="data/EXPORT_DD_GRID_2.js"></script>
+    <script src="data/EXPORT_DD_FEATURE_POINT_3.js"></script>
+    <script src="data/STREAM_TO_FEATURE_DD_4.js"></script>
+
+    <script>
+    var highlightLayer;
+    function highlightFeature(e) {
+        highlightLayer = e.target;
+
+        if (e.target.feature.geometry.type === 'LineString' ||
+            e.target.feature.geometry.type === 'MultiLineString') {
+            highlightLayer.setStyle({
+                color: 'rgba(255, 255, 0, 1.00)',
+            });
+        } else {
+            highlightLayer.setStyle({
+                fillColor: 'rgba(255, 255, 0, 1.00)',
+                fillOpacity: 1
+            });
+        }
+        highlightLayer.openPopup();
+    }
+
+    var map = L.map('map', {
+        zoomControl:false, maxZoom:28, minZoom:1
+    }).fitBounds([
+        [29.40314600077465,77.07119420948413],
+        [30.40026119940978,78.9360884624386]
+    ]);
+
+    var hash = new L.Hash(map);
+    map.attributionControl.setPrefix(
+        '<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; ' +
+        '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; ' +
+        '<a href="https://qgis.org">QGIS</a>'
+    );
+    var autolinker = new Autolinker({
+        truncate: {length: 30, location: 'smart'}
+    });
+
+    // remove popup's row if "visible-with-data"
+    function removeEmptyRowsFromPopupContent(content, feature) {
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        var rows = tempDiv.querySelectorAll('tr');
+        for (var i = 0; i < rows.length; i++) {
+            var td = rows[i].querySelector('td.visible-with-data');
+            var key = td ? td.id : '';
+            if (td && td.classList.contains('visible-with-data') &&
+                feature.properties[key] == null) {
+                rows[i].parentNode.removeChild(rows[i]);
+            }
+        }
+        return tempDiv.innerHTML;
+    }
+
+    // modify popup if contains media
+    function addClassToPopupIfMedia(content, popup) {
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        var imgTd = tempDiv.querySelector('td img');
+        if (imgTd) {
+            var src = imgTd.getAttribute('src');
+            if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
+                popup._contentNode.classList.add('media');
+                setTimeout(function() {
+                    popup.update();
+                }, 10);
+            } else if (/\.(mp3|wav|ogg|aac)$/i.test(src)) {
+                var audio = document.createElement('audio');
+                audio.controls = true;
+                audio.src = src;
+                imgTd.parentNode.replaceChild(audio, imgTd);
+                popup._contentNode.classList.add('media');
+                setTimeout(function() {
+                    popup.setContent(tempDiv.innerHTML);
+                    popup.update();
+                }, 10);
+            } else if (/\.(mp4|webm|ogg|mov)$/i.test(src)) {
+                var video = document.createElement('video');
+                video.controls = true;
+                video.src = src;
+                video.style.width = "400px";
+                video.style.height = "300px";
+                video.style.maxHeight = "60vh";
+                video.style.maxWidth = "60vw";
+                imgTd.parentNode.replaceChild(video, imgTd);
+                popup._contentNode.classList.add('media');
+                video.addEventListener('loadedmetadata', function() {
+                    popup.update();
+                });
+                setTimeout(function() {
+                    popup.setContent(tempDiv.innerHTML);
+                    popup.update();
+                }, 10);
+            } else {
+                popup._contentNode.classList.remove('media');
+            }
+        } else {
+            popup._contentNode.classList.remove('media');
+        }
+    }
+       var title = new L.Control({'position':'topright'});
+    title.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+    };
+    title.update = function () {
+        this._div.innerHTML = '<h2>DRAINGE DENSITY_HARIDWAR</h2>';
+    };
+    title.addTo(map);
+
+    var abstract = new L.Control({'position':'bottomleft'});
+    abstract.onAdd = function (map) {
+        this._div = L.DomUtil.create('div',
+        'leaflet-control abstract');
+        this._div.id = 'abstract';
+        this._div.setAttribute("onmouseenter", "abstract.show()");
+        this._div.setAttribute("onmouseleave", "abstract.hide()");
+        this.hide();
+        return this._div;
+    };
+    abstract.hide = function () {
+        this._div.classList.remove("abstractUncollapsed");
+        this._div.classList.add("abstract");
+        this._div.innerHTML = 'i';
+    };
+    abstract.show = function () {
+        this._div.classList.remove("abstract");
+        this._div.classList.add("abstractUncollapsed");
+        this._div.innerHTML = 'This project analyzes the drainage density distribution of Haridwar district using GIS techniques. Drainage density represents the total length of streams and rivers per unit area, providing insight into surface runoff and watershed characteristics. The spatial analysis identifies areas of high and low drainage concentration, helping to understand hydrological conditions and landscape dynamics. The results can support water resource management, flood assessment, and environmental planning in the region.';
+    };
+    abstract.addTo(map);
+
+    var zoomControl = L.control.zoom({
+        position: 'topleft'
+    }).addTo(map);
+
+    L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+
+    var measureControl = new L.Control.Measure({
+        position: 'topleft',
+        primaryLengthUnit: 'meters',
+        secondaryLengthUnit: 'kilometers',
+        primaryAreaUnit: 'sqmeters',
+        secondaryAreaUnit: 'hectares'
+    });
+    measureControl.addTo(map);
+
+    document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+    document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+
+    var bounds_group = new L.featureGroup([]);
+
+    function setBounds() {
+        map.setMaxBounds(map.getBounds());
+        map.setMinZoom(map.getZoom());
+    }
+
+    map.createPane('pane_OSMStandard_0');
+    map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+
+    var layer_OSMStandard_0 = L.tileLayer(
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        }
+    );
+
+    map.addLayer(layer_OSMStandard_0);
+
+    function pop_HARIDWAR_BOUNDAR_1(feature, layer) {
+        layer.on({
+            mouseout: function(e) {
+                for (var i in e.target._eventParents) {
+                    if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                }
+                if (typeof layer.closePopup == 'function') {
+                    layer.closePopup();
+                } else {
+                    layer.eachLayer(function(feature){
+                        feature.closePopup();
+                    });
+                }
+            },
+            mouseover: highlightFeature
+        });
+
+        var popupContent = '<table>\
+            </table>';
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+
+        layer.on('popupopen', function(e) {
+            addClassToPopupIfMedia(content, e.popup);
+        });
+        layer.bindPopup(content, { maxHeight: 400 });
+    }
+
+    function style_HARIDWAR_BOUNDAR_1_0() {
+        return {
+            pane: 'pane_HARIDWAR_BOUNDAR_1',
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 4.0,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(255,158,23,0.0)',
+            interactive: true
+        };
+    }
+
+    map.createPane('pane_HARIDWAR_BOUNDAR_1');
+    map.getPane('pane_HARIDWAR_BOUNDAR_1').style.zIndex = 401;
+    map.getPane('pane_HARIDWAR_BOUNDAR_1').style['mix-blend-mode'] = 'normal';
+
+    var layer_HARIDWAR_BOUNDAR_1 = new L.geoJson(
+        json_HARIDWAR_BOUNDAR_1,
+        {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_HARIDWAR_BOUNDAR_1',
+            layerName: 'layer_HARIDWAR_BOUNDAR_1',
+            pane: 'pane_HARIDWAR_BOUNDAR_1',
+            onEachFeature: pop_HARIDWAR_BOUNDAR_1,
+            style: style_HARIDWAR_BOUNDAR_1_0
+        }
+    );
+
+    bounds_group.addLayer(layer_HARIDWAR_BOUNDAR_1);
+    map.addLayer(layer_HARIDWAR_BOUNDAR_1);
+     function pop_EXPORT_DD_GRID_2(feature, layer) {
+        layer.on({
+            mouseout: function(e) {
+                for (var i in e.target._eventParents) {
+                    if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                }
+                if (typeof layer.closePopup == 'function') {
+                    layer.closePopup();
+                } else {
+                    layer.eachLayer(function(feature){
+                        feature.closePopup();
+                    });
+                }
+            },
+            mouseover: highlightFeature
+        });
+
+        var popupContent = '<table>\
+            <tr>\
+                <th scope="row">Id</th>\
+                <td>' + (feature.properties['Id'] !== null ? autolinker.link(String(feature.properties['Id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+            </tr>\
+            <tr>\
+                <th scope="row">DD</th>\
+                <td>' + (feature.properties['DD'] !== null ? autolinker.link(String(feature.properties['DD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+            </tr>\
+        </table>';
+
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+        layer.on('popupopen', function(e) {
+            addClassToPopupIfMedia(content, e.popup);
+        });
+        layer.bindPopup(content, { maxHeight: 400 });
+    }
+
+    function style_EXPORT_DD_GRID_2_0() {
+        return {
+            pane: 'pane_EXPORT_DD_GRID_2',
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 3.0,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(152,125,183,0.0)',
+            interactive: true
+        };
+    }
+
+    map.createPane('pane_EXPORT_DD_GRID_2');
+    map.getPane('pane_EXPORT_DD_GRID_2').style.zIndex = 402;
+    map.getPane('pane_EXPORT_DD_GRID_2').style['mix-blend-mode'] = 'normal';
+
+    var layer_EXPORT_DD_GRID_2 = new L.geoJson(
+        json_EXPORT_DD_GRID_2,
+        {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_EXPORT_DD_GRID_2',
+            layerName: 'layer_EXPORT_DD_GRID_2',
+            pane: 'pane_EXPORT_DD_GRID_2',
+            onEachFeature: pop_EXPORT_DD_GRID_2,
+            style: style_EXPORT_DD_GRID_2_0
+        }
+    );
+
+    bounds_group.addLayer(layer_EXPORT_DD_GRID_2);
+    map.addLayer(layer_EXPORT_DD_GRID_2);
+
+    function pop_EXPORT_DD_FEATURE_POINT_3(feature, layer) {
+        layer.on({
+            mouseout: function(e) {
+                for (var i in e.target._eventParents) {
+                    if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                }
+                if (typeof layer.closePopup == 'function') {
+                    layer.closePopup();
+                } else {
+                    layer.eachLayer(function(feature){
+                        feature.closePopup();
+                    });
+                }
+            },
+            mouseover: highlightFeature
+        });
+
+        var popupContent = '<table>\
+            <tr>\
+                <th scope="row">Id</th>\
+                <td>' + (feature.properties['Id'] !== null ? autolinker.link(String(feature.properties['Id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+            </tr>\
+            <tr>\
+                <th scope="row">DD</th>\
+                <td>' + (feature.properties['DD'] !== null ? autolinker.link(String(feature.properties['DD']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+            </tr>\
+        </table>';
+
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+        layer.on('popupopen', function(e) {
+            addClassToPopupIfMedia(content, e.popup);
+        });
+        layer.bindPopup(content, { maxHeight: 400 });
+    }
+
+    function style_EXPORT_DD_FEATURE_POINT_3_0() {
+        return {
+            pane: 'pane_EXPORT_DD_FEATURE_POINT_3',
+            radius: 4.0,
+            opacity: 1,
+            color: 'rgba(35,35,35,1.0)',
+            dashArray: '',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            weight: 1,
+            fill: true,
+            fillOpacity: 1,
+            fillColor: 'rgba(20,151,236,1.0)',
+            interactive: true
+        };
+    }
+
+    map.createPane('pane_EXPORT_DD_FEATURE_POINT_3');
+    map.getPane('pane_EXPORT_DD_FEATURE_POINT_3').style.zIndex = 403;
+    map.getPane('pane_EXPORT_DD_FEATURE_POINT_3').style['mix-blend-mode'] = 'normal';
+
+    var layer_EXPORT_DD_FEATURE_POINT_3 = new L.geoJson(
+        json_EXPORT_DD_FEATURE_POINT_3,
+        {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_EXPORT_DD_FEATURE_POINT_3',
+            layerName: 'layer_EXPORT_DD_FEATURE_POINT_3',
+            pane: 'pane_EXPORT_DD_FEATURE_POINT_3',
+            onEachFeature: pop_EXPORT_DD_FEATURE_POINT_3,
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(
+                    latlng,
+                    style_EXPORT_DD_FEATURE_POINT_3_0(feature)
+                );
+            }
+        }
+    );
+
+    bounds_group.addLayer(layer_EXPORT_DD_FEATURE_POINT_3);
+    map.addLayer(layer_EXPORT_DD_FEATURE_POINT_3);
+
+    function pop_STREAM_TO_FEATURE_DD_4(feature, layer) {
+        layer.on({
+            mouseout: function(e) {
+                for (var i in e.target._eventParents) {
+                    if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                }
+                if (typeof layer.closePopup == 'function') {
+                    layer.closePopup();
+                } else {
+                    layer.eachLayer(function(feature){
+                        feature.closePopup();
+                    });
+                }
+            },
+            mouseover: highlightFeature
+        });
+
+        var popupContent = '<table>\
+            </table>';
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+
+        layer.on('popupopen', function(e) {
+            addClassToPopupIfMedia(content, e.popup);
+        });
+        layer.bindPopup(content, { maxHeight: 400 });
+    }
+
+    function style_STREAM_TO_FEATURE_DD_4_0() {
+        return {
+            pane: 'pane_STREAM_TO_FEATURE_DD_4',
+            opacity: 1,
+            color: 'rgba(29,125,250,1.0)',
+            dashArray: '',
+            lineCap: 'square',
+            lineJoin: 'bevel',
+            weight: 3.0,
+            fillOpacity: 0,
+            interactive: true
+        };
+    }
+
+    map.createPane('pane_STREAM_TO_FEATURE_DD_4');
+    map.getPane('pane_STREAM_TO_FEATURE_DD_4').style.zIndex = 404;
+    map.getPane('pane_STREAM_TO_FEATURE_DD_4').style['mix-blend-mode'] = 'normal';
+
+    var layer_STREAM_TO_FEATURE_DD_4 = new L.geoJson(
+        json_STREAM_TO_FEATURE_DD_4,
+        {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_STREAM_TO_FEATURE_DD_4',
+            layerName: 'layer_STREAM_TO_FEATURE_DD_4',
+            pane: 'pane_STREAM_TO_FEATURE_DD_4',
+            onEachFeature: pop_STREAM_TO_FEATURE_DD_4,
+            style: style_STREAM_TO_FEATURE_DD_4_0
+        }
+    );
+
+    bounds_group.addLayer(layer_STREAM_TO_FEATURE_DD_4);
+    map.addLayer(layer_STREAM_TO_FEATURE_DD_4);
+       map.createPane('pane_DRAINGE_DENSITY_HARIDWAR_5');
+    map.getPane('pane_DRAINGE_DENSITY_HARIDWAR_5').style.zIndex = 405;
+
+    var img_DRAINGE_DENSITY_HARIDWAR_5 =
+        'data/DRAINGE_DENSITY_HARIDWAR_5.png';
+
+    var img_bounds_DRAINGE_DENSITY_HARIDWAR_5 = [
+        [29.52823339063251,77.66805618848232],
+        [30.2746097651083,78.35125889399723]
+    ];
+
+    var layer_DRAINGE_DENSITY_HARIDWAR_5 = new L.imageOverlay(
+        img_DRAINGE_DENSITY_HARIDWAR_5,
+        img_bounds_DRAINGE_DENSITY_HARIDWAR_5,
+        {pane: 'pane_DRAINGE_DENSITY_HARIDWAR_5'}
+    );
+
+    bounds_group.addLayer(layer_DRAINGE_DENSITY_HARIDWAR_5);
+    map.addLayer(layer_DRAINGE_DENSITY_HARIDWAR_5);
+
+    var overlaysTree = [
+        {label: "DRAINGE_DENSITY_HARIDWAR", layer: layer_DRAINGE_DENSITY_HARIDWAR_5},
+        {label: '<img src="legend/STREAM_TO_FEATURE_DD_4.png" /> STREAM_TO_FEATURE_DD', layer: layer_STREAM_TO_FEATURE_DD_4},
+        {label: '<img src="legend/EXPORT_DD_FEATURE_POINT_3.png" /> EXPORT_DD_FEATURE_POINT', layer: layer_EXPORT_DD_FEATURE_POINT_3},
+        {label: '<img src="legend/EXPORT_DD_GRID_2.png" /> EXPORT_DD_GRID', layer: layer_EXPORT_DD_GRID_2},
+        {label: '<img src="legend/HARIDWAR_BOUNDAR_1.png" /> HARIDWAR_BOUNDAR', layer: layer_HARIDWAR_BOUNDAR_1},
+        {label: "OSM Standard", layer: layer_OSMStandard_0}
+    ];
+
+    var lay = L.control.layers.tree(null, overlaysTree, {
+        collapsed: true
+    });
+
+    lay.addTo(map);
+    setBounds();
+
+    // Dashboard layer switches
+    function setDashboardLayer(inputId, layer) {
+        var control = document.getElementById(inputId);
+        if (!control) return;
+
+        control.addEventListener('change', function () {
+            if (control.checked) {
+                if (!map.hasLayer(layer)) map.addLayer(layer);
+            } else {
+                if (map.hasLayer(layer)) map.removeLayer(layer);
+            }
+        });
+    }
+
+    setDashboardLayer('toggle-density', layer_DRAINGE_DENSITY_HARIDWAR_5);
+    setDashboardLayer('toggle-streams', layer_STREAM_TO_FEATURE_DD_4);
+    setDashboardLayer('toggle-points', layer_EXPORT_DD_FEATURE_POINT_3);
+    setDashboardLayer('toggle-grid', layer_EXPORT_DD_GRID_2);
+    setDashboardLayer('toggle-boundary', layer_HARIDWAR_BOUNDAR_1);
+    setDashboardLayer('toggle-basemap', layer_OSMStandard_0);
+
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 250);
+
+    L.ImageOverlay.include({
+        getBounds: function () {
+            return this._bounds;
+        }
+    });
+    </script>
+</body>
+</html> 
